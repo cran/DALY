@@ -1,13 +1,31 @@
 \name{setLifeExp}
-
 \alias{setLifeExp}
 
-\title{Open the life expectancy window}
+\title{Open the \sQuote{Life Expectancy} window}
 
 \description{
-	This function opens the life expectancy window, where the life expectancy table can be customized. The default life expectancy table is the Coale and Demeny model life table West, which is set through function \code{\link{setStdLE}}.
+ This function opens the \sQuote{Life Expectancy} window,
+ where the Life Expectancy table can be customized.
+ The default table is the Coale and Demeny model life table West,
+ which is set through function \code{\link{setStdLE}}.
 }
 
-\usage{setLifeExp}
+\usage{setLifeExp()}
 
-\author{Brecht Devleesschauwer, Arie Havelaar, Juanita Haagsma, Nicolas Praet, Niko Speybroeck}
+\author{
+  Brecht Devleesschauwer,
+  Arie Havelaar,
+  Juanita Haagsma,
+  Nicolas Praet,
+  Niko Speybroeck
+
+  \strong{Maintainer:} Brecht Devleesschauwer \email{brecht.devleesschauwer@ugent.be}
+}
+
+\seealso{
+  \code{\link{setStdLE}}\cr\cr
+  \code{\link{DALYcalculator}}
+  (for a brief description of the \emph{DALY Calculator})\cr
+  \code{\link{DALYmanual}}
+  (for a more comprehensive overview)
+}

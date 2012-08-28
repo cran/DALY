@@ -1,13 +1,32 @@
 \name{saveDALYdata}
-
 \alias{saveDALYdata}
 
-\title{Save population and epidemiological data to a tab-delimited text file}
+\title{Save population and epidemiological data to an .RData image file}
 
 \description{
-	This function saves the population and epidemiological data to a tab-delimited text file, which can be opened in a spreadsheet program and modified by the user.
+  This function saves the population and epidemiological data to an .RData image file.
+  This file can be loaded into the \emph{DALY Calculator} through \code{readDALYdata()}.
 }
 
 \usage{saveDALYdata()}
 
-\author{Brecht Devleesschauwer, Arie Havelaar, Juanita Haagsma, Nicolas Praet, Niko Speybroeck}
+\author{
+  Brecht Devleesschauwer,
+  Arie Havelaar,
+  Juanita Haagsma,
+  Nicolas Praet,
+  Niko Speybroeck
+
+  \strong{Maintainer:} Brecht Devleesschauwer \email{brecht.devleesschauwer@ugent.be}
+}
+
+\seealso{
+  \code{\link{readDALYdata}}\cr
+  
+  \code{\link{DALYcalculator}}
+  (for a brief description of the \emph{DALY Calculator})\cr
+  \code{\link{DALYmanual}}
+  (for a more comprehensive overview)
+}
+
+\keyword{import/export}

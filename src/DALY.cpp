@@ -3,8 +3,8 @@
 // C++ interaction file for R DALY Package
 //
 // <author>     Brecht.Devleesschauwer@UGent.be
-// <version>    1.0
-// <date>       21/03/2011
+// <version>    1.1.0
+// <date>       22/08/2012
 //
 
 #include <iostream>
@@ -22,6 +22,8 @@ extern "C" {
         int XX[]  = {0,1,2,3,4,10,11,12,13,14,0,1,2,3,4,10,11,12,13,14,0,10,2,3,4,10,11,12,13,14,0,1,2,3,4,10,11,12,13,14};
         int XXX[] = {0,1,2,3,4,15,16,17,18,19,0,1,2,3,4,15,16,17,18,19,0,15,2,3,4,15,16,17,18,19,0,1,2,3,4,15,16,17,18,19};
         vector<double> samples;
+
+		GetRNGstate();
 
         for (int o=0; o<outcomes; o++)
         {
@@ -44,12 +46,6 @@ extern "C" {
                         double mode  = thisData[point1];
                         double min   = thisData[point2];
                         double max   = thisData[point3];
-
-                        /*Rprintf("%f\n",mode);
-                        Rprintf("%f\n",min);
-                        Rprintf("%f\n",max);
-                        R_FlushConsole();
-                        R_ProcessEvents();*/
 
                         double mean  = (max + 4*mode + min) /   6;
                         double sdev  = (max - min) / 6;
@@ -158,6 +154,9 @@ extern "C" {
 
             }
         }
+
+		PutRNGstate();
+
         return(samples);
     }
 
@@ -177,14 +176,13 @@ extern "C" {
         return(result);
     }
 
-    void getMC(int *returnMrt, double *YLD, double *YLL, int *IT, int *AW, double *DR, int *OC, int *nOC, int *getDist, int *getStrat, int *getStrAge, int *getStrSex, double *getPop, double *getDur, double *getOns, double *getInc, double *getTrt, double *getMrt, double *getDWt, double *getDWn, double *getDth, double *listLxp)
+    void getMC(int *MRT, int *INC, double *YLD, double *YLL, int *IT, int *AW, double *DR,
+			   int *OC, int *nOC, int *getDist, int *getStrat, int *getStrAge, int *getStrSex,
+			   double *getPop, double *getDur, double *getOns, double *getInc, double *getTrt,
+			   double *getMrt, double *getDWt, double *getDWn, double *getDth, double *listLxp)
     {
         double D = (double)*DR/100;
         int ageGroups = 5;
-
-        /*Rprintf("%f\n",D);
-        R_FlushConsole();
-        R_ProcessEvents();*/
 
         vector<double> SamplesInc = getSamples(getInc, getDist, getStrat, 0, *nOC, OC, *IT);
         vector<double> SamplesTrt = getSamples(getTrt, getDist, getStrat, 1, *nOC, OC, *IT);
@@ -195,41 +193,40 @@ extern "C" {
         vector<double> SamplesMrt = getSamples(getMrt, getDist, getStrat, 6, *nOC, OC, *IT);
         vector<double> SamplesDth = getSamples(getDth, getDist, getStrat, 7, *nOC, OC, *IT);
 
-        /*for (vector<double>::iterator i=SamplesMrt.begin(); i!=SamplesMrt.end(); i++)
+        for (int o=0; o<*nOC; o++) // iterate over outcomes
         {
-            Rprintf("%f\n",*i);
-            R_FlushConsole();
-            R_ProcessEvents();
-        }*/
-
-        for (int i=0; i<*IT; i++)
-        {
-            for (int a=0; a<ageGroups; a++)
+			unsigned int thisOC = o * 10 * (*IT);
+			unsigned int thisStr = 8*(OC[o]-1);
+			
+            for (int s=0; s<2; s++) // iterate over sexes
             {
-                for (int s=0; s<2; s++)
-                {
-                    for (int o=0; o<*nOC; o++)
+				unsigned int thisS = s * 5 * (*IT);
+				
+				for (int a=0; a<ageGroups; a++) // iterate over age groups
+				{
+					unsigned int thisAG = a * (*IT);
+									
+					for (int i=0; i<*IT; i++) // generate 'IT' simulations
                     {
-                        int thisOC = (*IT)*o;
-                        int thisStr = 8*(OC[o]-1);
-
-                        unsigned int inc = rbinom(getPop[a+5*s], (SamplesInc[ (thisOC*10) + a*getStrAge[thisStr]*(*IT) + s*getStrSex[thisStr]*(*IT) + i ] )/1000);
-                        double trt = SamplesTrt[ (thisOC*10) + a*getStrAge[thisStr+1]*(*IT) + s*getStrSex[thisStr+1]*(*IT) + i ];
-                        double ons = SamplesOns[ (thisOC*10) + a*getStrAge[thisStr+2]*(*IT) + s*getStrSex[thisStr+2]*(*IT) + i ];
-                        double dur = SamplesDur[ (thisOC*10) + a*getStrAge[thisStr+3]*(*IT) + s*getStrSex[thisStr+3]*(*IT) + i ];
-                        double DWt = SamplesDWt[ (thisOC*10) + a*getStrAge[thisStr+4]*(*IT) + s*getStrSex[thisStr+4]*(*IT) + i ];
-                        double DWn = SamplesDWn[ (thisOC*10) + a*getStrAge[thisStr+5]*(*IT) + s*getStrSex[thisStr+5]*(*IT) + i ];
-                        unsigned int mrt = rbinom(getPop[a+5*s], (SamplesMrt[ (thisOC*10) + a*getStrAge[thisStr+6]*(*IT) + s*getStrSex[thisStr+6]*(*IT) + i ] )/1000);
-                        double dth = SamplesDth[ (thisOC*10) + a*getStrAge[thisStr+7]*(*IT) + s*getStrSex[thisStr+7]*(*IT) + i ];
+                        unsigned int inc = rpois(getPop[a+5*s] * (SamplesInc[ (thisOC) + a*getStrAge[thisStr]*(*IT) + s*getStrSex[thisStr]*(*IT) + i ] )/1000);
+                        //unsigned int inc = getPop[a+5*s] * (SamplesInc[ (thisOC) + a*getStrAge[thisStr]*(*IT) + s*getStrSex[thisStr]*(*IT) + i ] ) / 1000;
+                        double trt = SamplesTrt[ (thisOC) + a*getStrAge[thisStr+1]*(*IT) + s*getStrSex[thisStr+1]*(*IT) + i ];
+                        double ons = SamplesOns[ (thisOC) + a*getStrAge[thisStr+2]*(*IT) + s*getStrSex[thisStr+2]*(*IT) + i ];
+                        double dur = SamplesDur[ (thisOC) + a*getStrAge[thisStr+3]*(*IT) + s*getStrSex[thisStr+3]*(*IT) + i ];
+                        double DWt = SamplesDWt[ (thisOC) + a*getStrAge[thisStr+4]*(*IT) + s*getStrSex[thisStr+4]*(*IT) + i ];
+                        double DWn = SamplesDWn[ (thisOC) + a*getStrAge[thisStr+5]*(*IT) + s*getStrSex[thisStr+5]*(*IT) + i ];
+                        unsigned int mrt = rpois(getPop[a+5*s] * (SamplesMrt[ (thisOC) + a*getStrAge[thisStr+6]*(*IT) + s*getStrSex[thisStr+6]*(*IT) + i ] )/1000);
+						//unsigned int mrt = getPop[a+5*s] * (SamplesMrt[ (thisOC) + a*getStrAge[thisStr+6]*(*IT) + s*getStrSex[thisStr+6]*(*IT) + i ] ) / 1000;
+                        double dth = SamplesDth[ (thisOC) + a*getStrAge[thisStr+7]*(*IT) + s*getStrSex[thisStr+7]*(*IT) + i ];
                         double lxp = getLxp(dth, s, listLxp);
 
-                        double YLDi  = inc * formula(D,*AW,ons,dur) * ((trt * DWt) + ((1-trt) * DWn));
+                        double YLDi = inc * formula(D,*AW,ons,dur) * ((trt * DWt) + ((1-trt) * DWn));
                         double YLLi = mrt * formula(D,*AW,dth,lxp);
 
-                        returnMrt[i+thisOC] += mrt;
-
-                        YLD[i+thisOC] += YLDi;
-                        YLL[i+thisOC] += YLLi;
+						INC[thisOC + thisS + thisAG + i] += inc;
+                        MRT[thisOC + thisS + thisAG + i] += mrt;
+                        YLD[thisOC + thisS + thisAG + i] += YLDi;
+                        YLL[thisOC + thisS + thisAG + i] += YLLi;
                     }
                 }
             }
