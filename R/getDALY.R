@@ -3,7 +3,7 @@
 ## Return object of S3 class 'DALY'
 
 getDALY <-
-function(button.call = FALSE){
+function(button.call = FALSE, aw, dr){
 
   ## Retrieve & evaluate user inputs
   ## NOTE: all inputs must be sent as 1D vector !!
@@ -24,14 +24,36 @@ function(button.call = FALSE){
     stop("Population table is empty.", call. = FALSE)
   }
 
+  # Age weighting
+  aw_gui <- ifelse(DALYtclvalue(".aw") == "Yes", TRUE, FALSE)
+  if (missing(aw)){
+    sendAW  <- aw_gui
+  } else {
+    if (!is.logical(aw))
+	  stop("Argument 'aw' must be a logical value", call. = FALSE)
+	if (aw != aw_gui)
+	  warning(paste("Age weighting constant specified in function call\n",
+		            "differs from the one specified in GUI."),
+              call. = FALSE)
+    sendAW <- aw
+  }
+
   # Discount rate
-  if (length(DALYget(".dr")) == 0){
+  if (length(DALYget(".dr")) == 0 & missing(dr)){
     if (button.call)
       tkmessageBox(title = "Error", icon = "error", type = "ok",
                    message = "Please enter a Discount Rate")
     stop("Please enter a Discount Rate.", call. = FALSE)
   } else {
-    sendDR <- DALYtclvalue(".dr")
+    if (missing(dr)){  # dr only specified in GUI
+      sendDR <- DALYtclvalue(".dr")
+	} else {  # dr specified in both GUI and function call
+	  sendDR <- dr * 100
+	  if (length(DALYget(".dr")) != 0 && DALYtclvalue(".dr") != sendDR)
+	    warning(paste("Discount rate specified in function call",
+		              "differs from the one specified in GUI."),
+                call. = FALSE)
+	}
   }
 
   sendDR <- gsub("%", "", sendDR)  # remove % sign, if present
@@ -40,6 +62,14 @@ function(button.call = FALSE){
       tkmessageBox(title = "Error", icon = "error", type = "ok",
                    message = "Discount Rate contains non-numeric value")
     stop("Discount Rate contains non-numeric value.", call. = FALSE)
+  }
+  if (as.numeric(sendDR) < 0 | as.numeric(sendDR) > 100){
+    if (button.call)
+      tkmessageBox(title = "Error", icon = "error", type = "ok",
+                   message = paste("Discount Rate must be",
+                                   "a numeric value between 0 and 100%"))
+    stop("Discount Rate must be a numeric value between 0 and 100%.",
+         call. = FALSE)
   }
 
   # Data distributions; convert to number (cf C++ code)
@@ -115,9 +145,6 @@ function(button.call = FALSE){
   # Life expectancy
   sendLxp <- getLifeExp()
   
-  # Age weighting
-  sendAW  <- ifelse(DALYtclvalue(".aw") == "Yes", 1, 0)
-
   # Iterations
   sendIT  <- DALYget("it")
 
@@ -130,12 +157,21 @@ function(button.call = FALSE){
   outcomes <- outcomes[outcomes != 0]
 
   ## Send data to C++ function
+  vector_length <- length(outcomes) * 5 * 2 * sendIT
   output <-
     .C("getMC",
-       MRT = as.integer(vector("numeric", length(outcomes) * 5 * 2 * sendIT)), 
-	   INC = as.integer(vector("numeric", length(outcomes) * 5 * 2 * sendIT)), 
-       YLD = as.double(vector("numeric", length(outcomes) * 5 * 2 * sendIT)), 
-       YLL = as.double(vector("numeric", length(outcomes) * 5 * 2 * sendIT)),
+       MRT = as.double(vector("numeric", vector_length)), 
+       INC = as.double(vector("numeric", vector_length)), 
+       YLD = as.double(vector("numeric", vector_length)), 
+       YLL = as.double(vector("numeric", vector_length)),
+	   samplesInc = as.double(vector("numeric", vector_length)),
+	   samplesTrt = as.double(vector("numeric", vector_length)),
+	   samplesOns = as.double(vector("numeric", vector_length)),
+	   samplesDur = as.double(vector("numeric", vector_length)),
+	   samplesDWt = as.double(vector("numeric", vector_length)),
+	   samplesDWn = as.double(vector("numeric", vector_length)),
+	   samplesMrt = as.double(vector("numeric", vector_length)),
+	   samplesDth = as.double(vector("numeric", vector_length)),
        IT = as.integer(sendIT), 
        AW = as.integer(sendAW),
        DR = as.double(sendDR),
@@ -178,8 +214,16 @@ function(button.call = FALSE){
     INC <- as.DALY.matrix(output$INC[range])
 	out[[i]] <-
 	  list(DALY = DALY, YLD = YLD, YLL = YLL,
-           INC = INC, MRT = MRT,
-           name = DALYtclvalue(paste("outcome", i, "Name", sep = "")))
+           cases = INC, deaths = MRT,
+           name = DALYtclvalue(paste("outcome", i, "Name", sep = "")),
+		   input = list(inc = as.DALY.matrix(output$samplesInc[range]),
+		                trt = as.DALY.matrix(output$samplesTrt[range]),
+		                ons = as.DALY.matrix(output$samplesOns[range]),
+		                dur = as.DALY.matrix(output$samplesDur[range]),
+		                DWt = as.DALY.matrix(output$samplesDWt[range]),
+		                DWn = as.DALY.matrix(output$samplesDWn[range]),
+		                mrt = as.DALY.matrix(output$samplesMrt[range]),
+                        dth = as.DALY.matrix(output$samplesDth[range])))
   }
 
   out[["pop"]] <- getData(DALYget("pop"), "pop")  # get '0' instead of 'NA'
@@ -199,5 +243,5 @@ function(button.call = FALSE){
 	  hist(out)
   }
 
-  return(invisible(out))
+  return(out)
 }

@@ -6,9 +6,9 @@ function(x, relative = FALSE, outcomes = FALSE, prob = .95, digits = 0, ...){
   total <- rbind(summarize(y$DALY,   .prob = prob, .digits = digits),
                  summarize(y$YLD,    .prob = prob, .digits = digits),
                  summarize(y$YLL,    .prob = prob, .digits = digits),
-                 summarize(y$Cases,  .prob = prob, .digits = digits),
-                 summarize(y$Deaths, .prob = prob, .digits = digits))
-  rownames(total) <- c("DALY", "YLD", "YLL", "Cases", "Deaths")
+                 summarize(y$cases,  .prob = prob, .digits = digits),
+                 summarize(y$deaths, .prob = prob, .digits = digits))
+  rownames(total) <- c("DALY", "YLD", "YLL", "cases", "deaths")
   colnames(total)[1:2] <- c("Mean", "Median")
 
   ## Contribution YLD & YLL
@@ -25,10 +25,10 @@ function(x, relative = FALSE, outcomes = FALSE, prob = .95, digits = 0, ...){
     out[[i]] <- rbind(summarize(y[[i]]$DALY,   .prob = prob, .digits = digits),
                       summarize(y[[i]]$YLD,    .prob = prob, .digits = digits),
                       summarize(y[[i]]$YLL,    .prob = prob, .digits = digits),
-                      summarize(y[[i]]$Cases,  .prob = prob, .digits = digits),
-                      summarize(y[[i]]$Deaths, .prob = prob, .digits = digits))
+                      summarize(y[[i]]$cases,  .prob = prob, .digits = digits),
+                      summarize(y[[i]]$deaths, .prob = prob, .digits = digits))
     names(out)[i] <- x[[i]]$name
-    rownames(out[[i]]) <- c("DALY", "YLD", "YLL", "Cases", "Deaths")
+    rownames(out[[i]]) <- c("DALY", "YLD", "YLL", "cases", "deaths")
     colnames(out[[i]])[1:2] <- c("Mean", "Median")
   }
 

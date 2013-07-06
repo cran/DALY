@@ -10,15 +10,7 @@
 
 \usage{saveDALYdata()}
 
-\author{
-  Brecht Devleesschauwer,
-  Arie Havelaar,
-  Juanita Haagsma,
-  Nicolas Praet,
-  Niko Speybroeck
-
-  \strong{Maintainer:} Brecht Devleesschauwer \email{brecht.devleesschauwer@ugent.be}
-}
+\author{\email{Brecht.Devleesschauwer@UGent.be}}
 
 \seealso{
   \code{\link{readDALYdata}}\cr

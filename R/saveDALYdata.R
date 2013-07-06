@@ -47,10 +47,10 @@ function(){
     DALYassign("DALY_data",
                list(model = model, settings = settings, data = data))
     save("DALY_data", file = fileName,
-         envir = as.environment("DALY"))
+         envir = DALYenv())
 	
 	## Cleanup 'DALY' database
-    rm(list = "DALY_data", pos = "DALY")
+    rm(list = "DALY_data", envir = DALYenv())
 
     ## Exit message
     tkmessageBox(title = "DALY calculator",

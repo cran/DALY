@@ -10,15 +10,16 @@ function(){
   setStdLE()
 
   ## Info message
-  info <- paste("DALY Calculator 1.1.0 (2012-08-28)",
+  info <- paste("DALY Calculator 1.2.0 (2013-07-06)",
                 "\nhttp://users.ugent.be/~bdvleess/DALYcalculator",
                 "\nDeveloped and maintained by:",
-                "  Brecht Devleesschauwer <brecht.devleesschauwer@ugent.be>",
+                "  Brecht Devleesschauwer <Brecht.Devleesschauwer@UGent.be>",
                 "\nWith contributions from:",
-                "  Arie Havelaar <arie.havelaar@rivm.nl>",
-                "  Juanita Haagsma <j.haagsma@erasmusmc.nl>",
-                "  Nicolas Praet <npraet@itg.be>",
-                "  Niko Speybroeck <niko.speybroeck@uclouvain.be>",
+				"  Scott McDonald",
+                "  Juanita Haagsma",
+                "  Nicolas Praet",
+                "  Arie Havelaar",
+                "  Niko Speybroeck",
                 sep = "\n")
 
   ## Create main DALY Calculator window
@@ -165,5 +166,5 @@ function(){
 
   ## Clean-up 'DALY' database
   rm(list = paste("outcome", seq(8), "Entry", sep = ""),
-     envir = as.environment("DALY"))
+     envir = DALYenv())
 }

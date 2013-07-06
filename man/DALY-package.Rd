@@ -20,25 +20,25 @@
   \tabular{ll}{
     Package: \tab DALY\cr
     Type: \tab Package\cr
-    Version: \tab 1.1.0\cr
-    Date: \tab 2012-08-28\cr
-    Depends: \tab R (>= 2.15.0), tcltk\cr
+    Version: \tab 1.2.0\cr
+    Date: \tab 2013-07-06\cr
+    Depends: \tab R (>= 3.0.0), tcltk\cr
     License: \tab GPL (>= 2)\cr
     SystemRequirements: \tab Tcl/Tk (>= 8.5), Tktable (>= 2.9)\cr
-    URL: \tab \url{http://www.r-project.org},
-	          \url{http://users.ugent.be/~bdvleess/DALYcalculator}\cr
+    URL: \tab \url{http://users.ugent.be/~bdvleess/DALYcalculator}\cr
     LazyData: \tab no
   }
 }
 
 \author{
   Brecht Devleesschauwer,
-  Arie Havelaar,
+  Scott McDonald,
   Juanita Haagsma,
   Nicolas Praet,
+  Arie Havelaar,
   Niko Speybroeck
-
-  \strong{Maintainer:} Brecht Devleesschauwer \email{brecht.devleesschauwer@ugent.be}
+  
+  \strong{Maintainer:} \email{Brecht.Devleesschauwer@UGent.be}
 }
 
 \references{

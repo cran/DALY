@@ -8,11 +8,15 @@
   based on the entered data, and returns the simulated results.
 }
 
-\usage{getDALY(button.call = FALSE)}
+\usage{getDALY(button.call = FALSE, aw, dr)}
 
 \arguments{
   \item{button.call}{Gives information on the origin of the call
   (i.e., through the GUI button (\code{TRUE}) or the \R Console (\code{FALSE}))}
+  \item{aw}{Logical flag, indicating if age weighting should be applied;
+            if \code{aw} is not specified, the value from the GUI will be used}
+  \item{dr}{Time discount rate (numeric value between 0 and 1);
+            if \code{dr} is not specified, the value from the GUI will be used}
 }
 
 \value{
@@ -46,46 +50,50 @@
   \item{3}{Sex}
 }
 
-\author{
-  Brecht Devleesschauwer,
-  Arie Havelaar,
-  Juanita Haagsma,
-  Nicolas Praet,
-  Niko Speybroeck
-
-  \strong{Maintainer:} Brecht Devleesschauwer \email{brecht.devleesschauwer@ugent.be}
-}
+\author{\email{Brecht.Devleesschauwer@UGent.be}}
 
 \seealso{
   The numerical output methods for \code{'DALY'}: \code{\link{print.DALY}}, \code{\link{summary.DALY}}\cr
   The graphical output method for \code{'DALY'}: \code{\link{hist.DALY}}\cr
-  The aggregator method for \code{'DALY'}: \code{\link{aggregate.DALY}}\cr\cr
+  The aggregator method for \code{'DALY'}: \code{\link{aggregate.DALY}}\cr
+  DALY sensitivity analysis : \code{\link{sensitivity}}\cr\cr
   \code{\link{DALYcalculator}}
   (for a brief description of the \emph{DALY Calculator})\cr
   \code{\link{DALYmanual}}
   (for a more comprehensive overview)
 }
-  
+
 \examples{
 \dontrun{
-## load the Neurocysticercosis example
+
+##= load the NCC example ==================================
 setDALYexample(1)
 
-## initiate the Monte Carlo simulation process, and store results in object x
-x <- getDALY()
+##= perform DALY calculation  =============================
+##= without age weighting and time discounting ============
+getDALY(aw = FALSE, dr = 0)
 
-## view the structure of 'x'
+##= perform DALY calculation, store results in 'x' ========
+##= (with age weighting and a 3\% time discount rate) ======
+x <- getDALY(aw = TRUE, dr = 0.03)
+
+##= view the structure of 'x' =============================
 str(x)
 
-## view the DALY calculation results
-print(x)                   # absolute, total
-print(x, relative = TRUE)  # relative (ie, per 1000 population)
-print(x, outcomes = TRUE)  # outcome-wise
+##= view the DALY calculation results =====================
+print(x)                   # absolute, total ==============
+print(x, relative = TRUE)  # relative (ie, per 1000 pop) ==
+print(x, outcomes = TRUE)  # outcome-wise =================
 
-## obtain minimum & maximum simulated DALY
+##= obtain minimum & maximum simulated DALY ===============
 min(x[[1]]$DALY)
 max(x[[1]]$DALY)
-}
-}
+
+##= standardized DALY histogram ===========================
+hist(x)
+
+##= DALY sensitivity analysis =============================
+sensitivity(x)
+}}
 
 \keyword{output}

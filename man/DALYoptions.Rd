@@ -25,15 +25,7 @@
   }
 }
 
-\author{
-  Brecht Devleesschauwer,
-  Arie Havelaar,
-  Juanita Haagsma,
-  Nicolas Praet,
-  Niko Speybroeck
-
-  \strong{Maintainer:} Brecht Devleesschauwer \email{brecht.devleesschauwer@ugent.be}
-}
+\author{\email{Brecht.Devleesschauwer@UGent.be}}
 
 \seealso{
   The numerical output methods for class \code{'DALY'}: \code{\link{print.DALY}}, \code{\link{summary.DALY}}\cr

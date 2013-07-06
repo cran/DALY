@@ -3,8 +3,8 @@
 // C++ interaction file for R DALY Package
 //
 // <author>     Brecht.Devleesschauwer@UGent.be
-// <version>    1.1.0
-// <date>       22/08/2012
+// <version>    1.2.0
+// <date>       02/07/2013
 //
 
 #include <iostream>
@@ -176,7 +176,10 @@ extern "C" {
         return(result);
     }
 
-    void getMC(int *MRT, int *INC, double *YLD, double *YLL, int *IT, int *AW, double *DR,
+    void getMC(double *MRT, double *INC, double *YLD, double *YLL,
+	           double *samplesInc, double *samplesTrt, double *samplesOns, double *samplesDur,
+	           double *samplesDWt, double *samplesDWn, double *samplesMrt, double *samplesDth,
+               int *IT, int *AW, double *DR,
 			   int *OC, int *nOC, int *getDist, int *getStrat, int *getStrAge, int *getStrSex,
 			   double *getPop, double *getDur, double *getOns, double *getInc, double *getTrt,
 			   double *getMrt, double *getDWt, double *getDWn, double *getDth, double *listLxp)
@@ -208,15 +211,13 @@ extern "C" {
 									
 					for (int i=0; i<*IT; i++) // generate 'IT' simulations
                     {
-                        unsigned int inc = rpois(getPop[a+5*s] * (SamplesInc[ (thisOC) + a*getStrAge[thisStr]*(*IT) + s*getStrSex[thisStr]*(*IT) + i ] )/1000);
-                        //unsigned int inc = getPop[a+5*s] * (SamplesInc[ (thisOC) + a*getStrAge[thisStr]*(*IT) + s*getStrSex[thisStr]*(*IT) + i ] ) / 1000;
+                        double inc = rpois(getPop[a+5*s] * (SamplesInc[ (thisOC) + a*getStrAge[thisStr]*(*IT) + s*getStrSex[thisStr]*(*IT) + i ] )/1000);
                         double trt = SamplesTrt[ (thisOC) + a*getStrAge[thisStr+1]*(*IT) + s*getStrSex[thisStr+1]*(*IT) + i ];
                         double ons = SamplesOns[ (thisOC) + a*getStrAge[thisStr+2]*(*IT) + s*getStrSex[thisStr+2]*(*IT) + i ];
                         double dur = SamplesDur[ (thisOC) + a*getStrAge[thisStr+3]*(*IT) + s*getStrSex[thisStr+3]*(*IT) + i ];
                         double DWt = SamplesDWt[ (thisOC) + a*getStrAge[thisStr+4]*(*IT) + s*getStrSex[thisStr+4]*(*IT) + i ];
                         double DWn = SamplesDWn[ (thisOC) + a*getStrAge[thisStr+5]*(*IT) + s*getStrSex[thisStr+5]*(*IT) + i ];
-                        unsigned int mrt = rpois(getPop[a+5*s] * (SamplesMrt[ (thisOC) + a*getStrAge[thisStr+6]*(*IT) + s*getStrSex[thisStr+6]*(*IT) + i ] )/1000);
-						//unsigned int mrt = getPop[a+5*s] * (SamplesMrt[ (thisOC) + a*getStrAge[thisStr+6]*(*IT) + s*getStrSex[thisStr+6]*(*IT) + i ] ) / 1000;
+                        double mrt = rpois(getPop[a+5*s] * (SamplesMrt[ (thisOC) + a*getStrAge[thisStr+6]*(*IT) + s*getStrSex[thisStr+6]*(*IT) + i ] )/1000);
                         double dth = SamplesDth[ (thisOC) + a*getStrAge[thisStr+7]*(*IT) + s*getStrSex[thisStr+7]*(*IT) + i ];
                         double lxp = getLxp(dth, s, listLxp);
 
@@ -227,6 +228,15 @@ extern "C" {
                         MRT[thisOC + thisS + thisAG + i] += mrt;
                         YLD[thisOC + thisS + thisAG + i] += YLDi;
                         YLL[thisOC + thisS + thisAG + i] += YLLi;
+						
+						samplesInc[thisOC + thisS + thisAG + i] = SamplesInc[ (thisOC) + a*getStrAge[thisStr]*(*IT) + s*getStrSex[thisStr]*(*IT) + i ];
+						samplesMrt[thisOC + thisS + thisAG + i] = SamplesMrt[ (thisOC) + a*getStrAge[thisStr+6]*(*IT) + s*getStrSex[thisStr+6]*(*IT) + i ];
+						samplesTrt[thisOC + thisS + thisAG + i] = trt;
+						samplesOns[thisOC + thisS + thisAG + i] = ons;
+						samplesDur[thisOC + thisS + thisAG + i] = dur;
+						samplesDWt[thisOC + thisS + thisAG + i] = DWt;
+						samplesDWn[thisOC + thisS + thisAG + i] = DWn;
+						samplesDth[thisOC + thisS + thisAG + i] = dth;
                     }
                 }
             }

@@ -1,85 +1,38 @@
-## (1) Startup & Exit functions
-## (2) Assign & Get functions (adapted from John Fox's Rcommander)
+## (1) Assign & Get functions (adapted from John Fox's Rcommander)
+## (2) Startup & Exit functions
 ## (3) Window handlers
 
-.onAttach <-
-function(...){
-  ## Return if not interactive
-  if (!interactive())
-    return()
-  
-  ## Startup messages
-  packageStartupMessage("\nWelcome to DALY Calculator 1.1.0 (2012-08-28)")
-  packageStartupMessage(paste("\nType 'DALYmanual()' for help on using",
-                              "the DALY Calculator"))
-  packageStartupMessage(paste("Type 'DALYcalculator()' for re-initializing",
-                              "the DALY Calculator\n"))
+## create DALY environment
+.DALYenv <- new.env()
 
-  ## Initiate Tcl/Tk widgets
-  if(.Platform$OS.type == "unix"){
-    addTclPath("/usr/local/lib/Tktable2.9")
-	addTclPath("/usr/local/lib/Tktable2.10")  # latest version
-  }
-  if (as.numeric(tcl("info", "tclversion")) < 8.5)
-    stop(paste("Loading the DALY Calculator requires",
-               "Tcl/Tk version 8.5 or greater.\n",
-               " -> Please download it from",
-               "www.activestate.com/activetcl/downloads",
-               sep = " "))
-  if (class(tclRequire("Tktable", warn = FALSE)) == "logical"){
-    stop(paste("Loading the DALY Calculator requires",
-               "the 'Tktable' toolkit.\n",
-               " -> Please download it from tktable.sourceforge.net\n",
-               " -> Ubuntu/Debian users may use",
-               "'sudo apt-get install libtktable2.9'",
-               sep = " "))
-  } else {
-    tclRequire("Tktable")
-  }
-  
-  ## Launch DALY Calculator
-  DALYcalculator.startup()
-}
+## return DALY environment
+DALYenv <- function() .DALYenv
 
-.onLoad <-
-function(...){
-  ## Create 'DALY' database
-  if (! "DALY" %in% search())
-    attach(NULL, pos = length(search()) - 1, name = "DALY")
-
-  ## Create list of active windows
-  assign("active.windows", list(), pos = "DALY")
-}
-
-.onUnload <-
-function(...){
-  detach(DALY)
-}
-
-##===========================================================================
-
+## assign object to DALY environment
 DALYassign <-
 function(x, val, row = NULL, col = NULL, item = NULL, ...){
   if (is.null(row) & is.null(col) & is.null(item)){
-    assign(x, value = val, pos = "DALY", ...)
+    assign(x, value = val, envir = DALYenv(), ...)
   } else if (is.null(row) & is.null(col)) {
     eval(parse(text = paste(x, "[['", item, "']] <- ", val, sep = "")),
-         envir = as.environment("DALY"))
+         envir = DALYenv())
   } else {
     eval(parse(text = paste(x, "[", row, ",", col, "] <- ", val, sep = "")),
-         envir = as.environment("DALY"))
+         envir = DALYenv())
   }
 }
 
+## get object from DALY environment
 DALYget <-
 function(x, row = NULL, col = NULL, ...){
   if (is.null(row) & is.null(col)){
-    get(x, pos = "DALY", inherits = FALSE, ...)
+    get(x, envir = DALYenv(), inherits = FALSE, ...)
   } else {
-    get(x, pos = "DALY", inherits = FALSE, ...)[[row, col]]
+    get(x, envir = DALYenv(), inherits = FALSE, ...)[[row, col]]
   }
 }
 
+## get tclvalue
 DALYtclvalue <-
 function(x){
   ## tclVar versus tclArray
@@ -103,7 +56,8 @@ function(x){
   return(out)
 }
 
-DALYupdate <-  # from R:tmp --> Tcl:x
+## assign from R:tmp --> Tcl:x
+DALYupdate <-
 function(x, tmp = DALYget(substr(x, 2, nchar(x)))){
   row <- nrow(tmp)
   col <- ncol(tmp)
@@ -112,31 +66,34 @@ function(x, tmp = DALYget(substr(x, 2, nchar(x)))){
   if (is.null(row) & is.null(col)){
     eval(parse(text = paste("tcltk::tclvalue(", x, ") <- '",
                             tmp, "'", sep = "")),
-         envir = as.environment("DALY"))
+         envir = DALYenv())
   } else {
     for (i in seq(row)){
       for (j in seq(col)){
         new <- ifelse(is.na(tmp[i, j]), "NULL", tmp[i, j])
         eval(parse(text = paste(x, "[[", i, ",", j, "]] <- ", new, sep = "")),
-             envir = as.environment("DALY"))
+             envir = DALYenv())
       }
     }
   }
 }
 
-DALYsave <-  # from Tcl:x --> R:tmp
+## assign from Tcl:x -> R:tmp
+DALYsave <-
 function(x){
   DALYassign(substr(x, 2, nchar(x)), DALYtclvalue(x))
 }
 
+## exists() in DALY environment
 DALYexists <-
 function(x, ...){
-  return(exists(x, envir = as.environment("DALY"), ...))
+  return(exists(x, envir = DALYenv(), ...))
 }
 
+## eval() in DALY environment
 DALYeval <-
 function(x, ...){
-  eval(x, envir = as.environment("DALY"), ...)
+  eval(x, envir = DALYenv(), ...)
 }
 
 DALYcheck <-
@@ -174,6 +131,54 @@ function(x){
   if (grepl("DWn", x)) return("DW-untreated table")
   if (grepl("mrt", x)) return("Mortality table")
   if (grepl("lxp", x)) return("Average age at death table")
+}
+
+##===========================================================================
+
+.onAttach <-
+function(...){
+  ## Return if not interactive
+  if (!interactive())
+    return()
+  
+  ## Startup messages
+  packageStartupMessage("\nWelcome to DALY Calculator 1.2.0 (2013-07-06)")
+  packageStartupMessage(paste("\nType 'DALYmanual()' for help on using",
+                              "the DALY Calculator"))
+  packageStartupMessage(paste("Type 'DALYcalculator()' for re-initializing",
+                              "the DALY Calculator\n"))
+
+  ## Initiate Tcl/Tk widgets
+  if(.Platform$OS.type == "unix"){
+    addTclPath("/usr/local/lib/Tktable2.9")
+	addTclPath("/usr/local/lib/Tktable2.10")  # latest version
+  }
+  if (as.numeric(tcl("info", "tclversion")) < 8.5)
+    stop(paste("Loading the DALY Calculator requires",
+               "Tcl/Tk version 8.5 or greater.\n",
+               " -> Please download it from",
+               "www.activestate.com/activetcl/downloads",
+               sep = " "))
+  if (class(tclRequire("Tktable", warn = FALSE)) == "logical"){
+    stop(paste("Loading the DALY Calculator requires",
+               "the 'Tktable' toolkit.\n",
+               " -> Please download it from",
+               "packages.ubuntu.com/search?keywords=tk-table\n",
+               " -> Ubuntu/Debian users may use\n",
+               "     'sudo apt-get install tk-table' or\n",
+			   "     'sudo apt-get install libtktable2.9'"))
+  } else {
+    tclRequire("Tktable")
+  }
+  
+  ## Launch DALY Calculator
+  DALYcalculator.startup()
+}
+
+.onLoad <-
+function(...){
+  ## Create list of active windows
+  assign("active.windows", list(), envir = DALYenv())
 }
 
 ##===========================================================================

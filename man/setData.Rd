@@ -15,15 +15,7 @@
   \item{n}{Integer, corresponding to the health outcome to be set}
 }
 
-\author{
-  Brecht Devleesschauwer,
-  Arie Havelaar,
-  Juanita Haagsma,
-  Nicolas Praet,
-  Niko Speybroeck
-
-  \strong{Maintainer:} Brecht Devleesschauwer \email{brecht.devleesschauwer@ugent.be}
-}
+\author{\email{Brecht.Devleesschauwer@UGent.be}}
 
 \seealso{
   \code{\link{DALYcalculator}}

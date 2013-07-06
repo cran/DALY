@@ -4,48 +4,50 @@
 readDALYdata <-
 function(file = NULL, example = NULL){
   ## Ask 'fileName' to user
-  fileName <- ""
+  fileName <- file
   if (is.null(file) & is.null(example))
     fileName <- tclvalue(tkgetOpenFile(filetypes = "{{R Images} {.RData}}"))
 
-  if (fileName != "" | !is.null(example)){
+  if (!is.null(fileName) | !is.null(example)){
   
     if (is.null(example)){
       ## Evaluate 'fileName': should end with '.RData'
       if (!grepl(".RData$", fileName, ignore.case = TRUE)){
-        tkmessageBox(message = "The file you selected is not an '.RData' file",
-                     title = "DALY calculator", icon = "error")
+        tkmessageBox(message = paste("The file you selected",
+                                     "is not an '.RData' file"),
+                     title = "DALY calculator",
+                     icon = "error")
         stop("The file you selected is not an '.RData' file", call. = FALSE)
       }
 
-      ## Try loading data into current frame ## envir ???
-      tryCatch(load(fileName, envir = as.environment("DALY")),
+      ## Try loading data into current frame
+      tryCatch(load(fileName, envir = DALYenv()),
                silent = TRUE,
                error =
                  function(e){
                    tkmessageBox(message = "Error while loading file",
                                 title = "DALY calculator", icon = "error")
-                   stop(paste("Error while loading file\n",
-                        " The file may be corrupt or of unsupported format"),
+                   stop(paste("Error while loading file\n      ",
+                        "The file may be corrupt or of unsupported format"),
                         call. = FALSE)
                   })
       DALY_name <- "DALY_data"
 
     } else {
-	  ## Load example dataset
+      ## Load example dataset
       examples <- c("Neurocysticercosis", "Toxoplasmosis")
-	  DALY_name <- paste("DALY_", examples[example], sep = "")
-	  data(list = DALY_name, envir = as.environment("DALY"))
-	}
+      DALY_name <- paste("DALY_", examples[example], sep = "")
+      data(list = DALY_name, envir = DALYenv())
+    }
 
     ## Reset DALY Calculator
     reset()
 
-	## Retrieve data
-	model <- DALYget(DALY_name)$model
-	settings <- DALYget(DALY_name)$settings
-	data <- DALYget(DALY_name)$data
-	
+    ## Retrieve data
+    model <- DALYget(DALY_name)$model
+    settings <- DALYget(DALY_name)$settings
+    data <- DALYget(DALY_name)$data
+
     ## Update 'disease model'
     DALYupdate("diseaseName", model$diseaseName)
     for (i in seq(8))
@@ -73,9 +75,8 @@ function(file = NULL, example = NULL){
       }
     }
 	
-	## Clean-up 'DALY' database
-	rm(list = DALY_name,
-	   envir = as.environment("DALY"))
+    ## Clean-up 'DALY' database
+    rm(list = DALY_name, envir = DALYenv())
 
     ## Status message
     tkmessageBox(message = "Data successfully loaded",
