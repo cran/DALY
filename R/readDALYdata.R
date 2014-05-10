@@ -76,7 +76,8 @@ function(file = NULL, example = NULL){
     }
 	
     ## Clean-up 'DALY' database
-    rm(list = DALY_name, envir = DALYenv())
+    rm(list = DALY_name,
+       envir = DALYenv())
 
     ## Status message
     tkmessageBox(message = "Data successfully loaded",
