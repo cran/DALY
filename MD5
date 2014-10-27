@@ -1,9 +1,10 @@
-9c75ebe72b7996cbc2e0e09d608c04c4 *DESCRIPTION
-917484a02f909b4e48a7238db7464a40 *NAMESPACE
+5fea2a2188145df9a83474a72a366008 *DESCRIPTION
+7e4c792119dd95db557377c58ff8685b *NAMESPACE
+06b188bcc3745904e129b152853b8a36 *NEWS
 4e99d7bd8332c26d37a5ffc4eb62b147 *R/DALY_barplot.R
 efebb460fdb0b17369c9f8e49e8d7689 *R/DALY_list.R
 fcc5a14337de544d432bfcc33074eb9a *R/DALYcalculator.R
-fbd150a6bc2799a139601b05e1c45dd6 *R/DALYcalculator.startup.R
+de13217f45cb4a71e27f4b17a120d775 *R/DALYcalculator.startup.R
 7855dcc30036006cbf7c61b0a2bc7941 *R/DALYmanual.R
 87a876fb2df42052a6f67bc2c2450e18 *R/DALYoptions.R
 c95865b4174dea4369b95483f5241041 *R/DALYoptions.startup.R
@@ -43,12 +44,12 @@ f1381de2dbfde409cf095c250fa48fd0 *R/setDist.R
 ca5fdc35629703e0dad47a796cee475f *R/summarize.R
 5462c5ff7096623cfca45fa9768f2aeb *R/summary.DALY.R
 4f8232dea38987fa3c2368d46aa5aa95 *R/writeData.R
-59d4d87b088011464d1ce7f228878144 *R/zzz.R
+8b10e80e9427ff4c22819fd8a8051431 *R/zzz.R
 270cdc3a6c4264c6da9faf1d2d9aa8c7 *data/DALY_Neurocysticercosis.RData
 6f1167bfd6f45c63a87e3bde690becdf *data/DALY_Toxoplasmosis.RData
-3d4799ae81dc4bca38a90e149f9da65c *inst/CITATION
-dfa1e68f82c9ba63cf75d527c778efb0 *inst/doc/DALYmanual.pdf
-c4652e7c500f97d5ab4838e25c6dd23b *man/DALY-package.Rd
+e7399f5d956c7f18f280a68aba50bb1c *inst/CITATION
+c554e7731aa27e8e4b5b421f5787dcc6 *inst/doc/DALYmanual.pdf
+69974e0aad0272a0995a1ee527bccfde *man/DALY-package.Rd
 619fb685dc77c3cbd1248d8ef4507d64 *man/DALY_Neurocysticercosis.Rd
 d9961b6d0f86783f5cb64511c71d3456 *man/DALY_Toxoplasmosis.Rd
 d5929bcec44571af2ad949af81e397c6 *man/DALY_list.Rd
@@ -71,4 +72,4 @@ e1210f2766e96bcaa7765e8ff396f1c7 *man/setLifeExp.Rd
 ffd04710ea947423140a444baba1a9b0 *man/setPop.Rd
 84eab9270820759321b0eb44c5e0e2d0 *man/setStdLE.Rd
 cc4f16f80932d05d83fbfd569cbcc507 *man/summary.DALY.Rd
-cf4f6837440969355ae5ae88dc5d0810 *src/DALY.cpp
+95e6e123e5075f88646ee717cc2d72ec *src/DALY.cpp

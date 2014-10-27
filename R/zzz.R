@@ -109,13 +109,18 @@ function(x, allow.null){
     out <- matrix(nrow = row, ncol = col)
     for (i in seq(row)){
       for (j in seq(col)){
-        new <- grepl("^[[:digit:]]*\\.?[[:digit:]]+$", DALYget(x, i, j))
-        out[i, j] <- ifelse(length(new) == 0, allow.null, new)
+        is_num <- is_num(DALYget(x, i, j))
+        out[i, j] <- ifelse(length(is_num) == 0, allow.null, is_num)
       }
     }
     out <- all(out == TRUE)
   }
   return(invisible(out))
+}
+
+is_num <-
+function(x) {
+  return(!is.na(suppressWarnings(as.numeric(x))))
 }
 
 DALYtxt <-
@@ -142,7 +147,7 @@ function(...){
     return()
   
   ## Startup messages
-  packageStartupMessage("\nWelcome to DALY Calculator 1.3.0 (2014-05-10)")
+  packageStartupMessage("\nWelcome to DALY Calculator 1.4.0 (2014-10-27)")
   packageStartupMessage(paste("\nType 'DALYmanual()' for help on using",
                               "the DALY Calculator"))
   packageStartupMessage(paste("Type 'DALYcalculator()' for re-initializing",
