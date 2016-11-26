@@ -10,7 +10,7 @@
   \enumerate{
     \item{Set the \sQuote{Population} table}
     \item{Set the \sQuote{Life Expectancy} table - the default is the
-	      Coale and Demeny model life table West, level 25 and 26}
+	      standard life expectancy table introduced in the GBD2010 study}
     \item{Set the input parameters and corresponding
 	      distributions and stratification levels}
     \item{Set the age weighting and time discounting rates}
@@ -77,10 +77,14 @@
   }
 }
 
-\author{\email{Brecht.Devleesschauwer@UGent.be}}
+\author{\email{brechtdv@gmail.com}}
 
 \references{
   \itemize{
+    \item{\url{http://daly.cbra.be}}
+    \item{Devleesschauwer B, et al. (2014). Calculating Disability-Adjusted
+          Life Years to quantify burden of disease. \emph{International Journal
+          of Public Health 59,} 565-569. \url{http://dx.doi.org/10.1007/s00038-014-0552-z}}
     \item{Praet N, Speybroeck N, Manzanedo R, Berkvens D, Nforninwe DN,
 	      Zoli A, Quet F, Preux P-M, Carabin H, Geerts S (2009).
 		  The disease burden of \emph{Taenia solium} cysticercosis in Cameroon.
@@ -88,7 +92,6 @@
     \item{Kortbeek LM, Hofhuis A, Nijhuis CDM, Havelaar AH (2009).
 	      Congenital toxoplasmosis and DALYs in the Netherlands.
 		  \emph{Memorias de Instituto Oswaldo Cruz 104(2),} 370-373.}
-    \item{\url{http://users.ugent.be/~bdvleess/DALYcalculator}}
   }
 }
 
